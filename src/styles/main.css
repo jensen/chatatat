@@ -1,0 +1,21 @@
+:root {
+  --discord-blue: #5865f2;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+.bg-discord {
+  background-color: var(--discord-blue);
+}
+
+.border-discord {
+  border-color: var(--discord-blue);
+}
+
+.text-discord {
+  color: var(--discord-blue);
+}

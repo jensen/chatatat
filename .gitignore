@@ -1,0 +1,15 @@
+node_modules
+/.cache
+/netlify/functions/server/build
+/public/build
+/.netlify
+
+/src/styles/lib.css
+
+
+/.env
+/.env.*
+# Supabase
+**/supabase/.branches
+**/supabase/.temp
+**/supabase/.env
