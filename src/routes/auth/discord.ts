@@ -3,6 +3,10 @@ import { redirect } from "remix";
 
 import create from "~/services";
 
+if (typeof process.env.CLIENT_URL !== "string") {
+  throw new Error("Must declare CLIENT_URL");
+}
+
 export let action: ActionFunction = async ({ request, params, context }) => {
   const supabase = create();
 
@@ -11,7 +15,7 @@ export let action: ActionFunction = async ({ request, params, context }) => {
       provider: "discord",
     },
     {
-      redirectTo: "http://localhost:3000/auth/discord/callback",
+      redirectTo: `${process.env.CLIENT_URL}/auth/discord/callback?redirect_to=/rooms`,
     }
   );
 

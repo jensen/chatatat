@@ -1,27 +1,30 @@
-import type { LoaderFunction } from "remix";
-import { useLoaderData, json, Outlet } from "remix";
+import type { ActionFunction, LoaderFunction } from "remix";
+import { useLoaderData, json, Outlet, redirect } from "remix";
 import { supabase } from "~/util/auth";
-import Logo from "~/components/Logo";
 
+import AddRoom from "~/components/AddRoom";
+import ConversationList from "~/components/ConversationList";
+import Logo from "~/components/Logo";
 import RoomList from "~/components/RoomList";
+import AddConversation from "~/components/AddConversation";
 
 type IndexData = {
-  rooms: IRoom[];
+  rooms: IRoomResource[];
 };
 
 export let loader: LoaderFunction = async ({ request }) => {
   const db = await supabase(request);
 
-  const { data, error } = await db.from<IRoom>("rooms").select();
+  const { data: rooms, error } = await db.from<IRoomResource>("rooms").select();
 
-  return json({ rooms: data });
+  return json({ rooms });
 };
 
-interface IIndexViewProps {
+interface IroomsViewProps {
   rooms: any[];
 }
 
-const View = (props: IIndexViewProps) => {
+const View = (props: IroomsViewProps) => {
   return (
     <div className="h-full flex">
       <aside className="bg-twilight">
@@ -29,13 +32,17 @@ const View = (props: IIndexViewProps) => {
           <Logo />
           <div className="pl-2">
             <h2 className="text-xl font-bold text-gray-100">Chat</h2>
-            <h3 className="text-xs font-light text-gray-300">23 online</h3>
+            <h3 className="text-xs font-light text-gray-300"></h3>
           </div>
         </header>
         <section>
-          <div></div>
+          <AddRoom />
         </section>
         <RoomList rooms={props.rooms} />
+        <section>
+          <AddConversation />
+        </section>
+        <ConversationList conversations={[]} />
       </aside>
       <main className="flex-1 bg-midnight">
         <Outlet />
@@ -44,7 +51,7 @@ const View = (props: IIndexViewProps) => {
   );
 };
 
-export default function Index() {
+export default function rooms() {
   let data = useLoaderData<IndexData>();
 
   return <View {...data} />;

@@ -3,7 +3,7 @@ export default function DiscordButton() {
     <form method="post" action="/auth/discord">
       <button
         type="submit"
-        className="bg-discord p-2 rounded flex items-center"
+        className="bg-discord px-4 py-2 rounded-full flex items-center hover:bg-yellow-400"
       >
         <svg
           width={21}

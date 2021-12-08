@@ -6,9 +6,9 @@ const AuthContext = React.createContext({});
 export default function AuthProvider(props) {
   const user = useSupabaseUser();
 
-  console.log(user);
-
   return (
-    <AuthContext.Provider value={{}}>{props.children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ user }}>
+      {props.children}
+    </AuthContext.Provider>
   );
 }

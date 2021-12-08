@@ -1,11 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --discord-blue: #5865f2;
+  --twilight: #27193d;
+  --midnight: #030017;
+  --dusk: #483a5a;
 }
 
 html,
 body,
 #root {
   height: 100%;
+}
+
+body {
+  @apply bg-indigo-900 text-white;
 }
 
 .bg-discord {
@@ -18,4 +29,16 @@ body,
 
 .text-discord {
   color: var(--discord-blue);
+}
+
+.bg-midnight {
+  background-color: var(--midnight);
+}
+
+.bg-twilight {
+  background-color: var(--twilight);
+}
+
+.bg-dusk {
+  background-color: var(--dusk);
 }

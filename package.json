@@ -5,21 +5,26 @@
   "license": "",
   "scripts": {
     "build": "npm run build:css && remix build",
-    "build:css": "tailwindcss -o ./src/styles/lib.css",
+    "build:css": "tailwindcss -i ./src/styles/main.css -o ./src/styles/compiled.css",
     "dev": "concurrently \"npm run dev:css\" \"remix watch\"",
-    "dev:css": "tailwindcss -o ./src/styles/lib.css --watch",
+    "dev:css": "tailwindcss -i ./src/styles/main.css -o ./src/styles/compiled.css --watch",
     "postinstall": "remix setup node",
-    "dev:netlify": "cross-env NODE_ENV=development netlify dev"
+    "dev:netlify": "cross-env NODE_ENV=development netlify dev",
+    "types:generate": "npx openapi-typescript httpw://localhost:8000/rest/v1/?apikey=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYyNzIwODU0MCwiZXhwIjoxOTc0MzYzNzQwfQ.zcaQfHd3VA7XgJmdGfmV86OLVJT9s2MTmSy-e69BpUY --output services/types/supabase.ts"
   },
   "dependencies": {
+    "@headlessui/react": "^1.4.2",
     "@netlify/functions": "^0.7.2",
     "@remix-run/netlify": "^1.0.6",
     "@remix-run/react": "^1.0.6",
     "@supabase/supabase-js": "^1.28.4",
+    "classnames": "^2.3.1",
+    "date-fns": "^2.27.0",
     "dotenv": "^10.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "remix": "^1.0.6"
+    "remix": "^1.0.6",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@remix-run/dev": "^1.0.6",

@@ -5,6 +5,7 @@ declare global {
       SUPABASE_ANON_KEY: string;
       COOKIE_SESSION_KEY_A: string;
       COOKIE_SESSION_KEY_B: string;
+      CLIENT_URL: string;
     }
   }
 }

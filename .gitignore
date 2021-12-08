@@ -4,7 +4,7 @@ node_modules
 /public/build
 /.netlify
 
-/src/styles/lib.css
+/src/styles/compiled.css
 
 
 /.env

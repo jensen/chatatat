@@ -10,14 +10,15 @@ import {
   useLoaderData,
 } from "remix";
 import type { LoaderFunction, MetaFunction, LinksFunction } from "remix";
+import { supabase } from "~/util/auth";
 
 import SupabaseProvider from "~/context/supabase";
 import AuthProvider from "~/context/auth";
 
+import { indexed } from "./util/transform";
 import create from "~/util/session.server";
 
-import libStyles from "~/styles/lib.css";
-import mainStyles from "~/styles/main.css";
+import compiledStyles from "~/styles/compiled.css";
 
 export let meta: MetaFunction = () => {
   return {
@@ -27,20 +28,20 @@ export let meta: MetaFunction = () => {
 };
 
 export let links: LinksFunction = () => {
-  return [
-    { rel: "stylesheet", href: libStyles },
-    { rel: "stylesheet", href: mainStyles },
-  ];
+  return [{ rel: "stylesheet", href: compiledStyles }];
 };
 
 export let loader: LoaderFunction = async ({ request }) => {
+  const db = await supabase(request);
   const { getSession } = create();
 
   const session = await getSession(request.headers.get("Cookie"));
-
   const token = session.get("token");
 
+  const { data: users, error } = await db.from("profiles").select();
+
   return json({
+    users: indexed(users || []),
     token,
     env: {
       SUPABASE_URL: process.env.SUPABASE_URL,
@@ -50,12 +51,12 @@ export let loader: LoaderFunction = async ({ request }) => {
 };
 
 export default function App() {
-  let { env, token } = useLoaderData();
+  let { users, env, token } = useLoaderData();
 
   return (
     <Document>
       <Environment env={env} />
-      <SupabaseProvider token={token}>
+      <SupabaseProvider token={token} users={users}>
         <AuthProvider>
           <Layout>
             <Outlet />
@@ -159,15 +160,15 @@ import DiscordButton from "~/components/DiscordButton";
 function Layout({ children }: { children: React.ReactNode }) {
   return (
     <main className="h-full flex flex-col">
-      <header className="px-4 py-2 text-discord flex justify-between items-center border-b-4 border-discord">
-        <h2 className="text-xl">
-          <span className="font-bold">App</span>
-          <span className="font-light">lication</span>
+      <header className="pl-6 pr-2 py-2 bg-indigo-800 text-yellow-400 flex justify-between items-center">
+        <h2 className="text-2xl">
+          <span className="font-bold">Another</span>
+          <span className="font-light">Chat</span>
         </h2>
         <DiscordButton />
       </header>
-      <div className="p-4 flex-1">{children}</div>
-      <footer className="h-8 bg-discord text-white"></footer>
+      <div className="flex-1 overflow-hidden">{children}</div>
+      {/* <footer className="h-8 bg-yellow-400 rounded-full text-white"></footer> */}
     </main>
   );
 }
