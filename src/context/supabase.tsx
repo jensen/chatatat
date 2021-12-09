@@ -2,40 +2,50 @@ import { SupabaseClient, AuthUser } from "@supabase/supabase-js";
 import React, { useEffect, useState, useContext, useCallback } from "react";
 import create from "~/services";
 
+interface IIndexedUsers {
+  [key: string]: IUser;
+}
+
 interface ISupabaseContext {
   supabase: SupabaseClient | null;
   user: AuthUser | null;
+  users: IIndexedUsers;
 }
 
 const SupabaseContext = React.createContext<ISupabaseContext>({
   supabase: null,
   user: null,
+  users: {},
 });
+
+interface IUser {
+  id: string;
+}
 
 interface ISupabaseProviderProps {
   token: string;
-  users: any[];
+  users: IIndexedUsers;
   children: React.ReactNode;
 }
 
 export default function SupabaseProvider(props: ISupabaseProviderProps) {
   const [supabase, setSupabase] = useState<SupabaseClient | null>(() => null);
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [users, setUsers] = useState(props.users);
+  const [user, setUser] = useState<AuthUser | null | undefined>(undefined);
+  const [users, setUsers] = useState<IIndexedUsers>(props.users);
 
   useEffect(() => {
     const supabase = create(props.token);
 
     setSupabase(supabase);
 
-    supabase.auth.api
-      .getUser(props.token)
-      .then(({ data, error }) => setUser(data));
+    supabase.auth.api.getUser(props.token).then(({ data, error }) => {
+      setUser(data);
+    });
   }, [props.token]);
 
   return (
     <SupabaseContext.Provider value={{ supabase, user, users }}>
-      {props.children}
+      {user !== undefined && props.children}
     </SupabaseContext.Provider>
   );
 }
@@ -76,7 +86,10 @@ export const useSupabaseUserCache = () => {
   };
 };
 
-export const useSupabaseSubscription = (table: string) => {
+export const useSupabaseSubscription = (
+  table: string,
+  update: (item: any) => void
+) => {
   const supabase = useSupabase();
   const user = useSupabaseUser();
   const [state, setState] = useState<IMessageResource[]>([]);
@@ -92,13 +105,13 @@ export const useSupabaseSubscription = (table: string) => {
         .on("INSERT", async (payload) => {
           if (payload.new.user_id) {
             if (payload.new.user_id !== user?.id) {
-              setState((prev) => [...prev, payload.new]);
+              update(payload.new);
             }
           }
 
           if (payload.new.from_id) {
             if (payload.new.from_id !== user?.id) {
-              setState((prev) => [...prev, payload.new]);
+              update(payload.new);
             }
           }
         })
@@ -108,7 +121,7 @@ export const useSupabaseSubscription = (table: string) => {
         supabase.removeSubscription(subscription);
       };
     }
-  }, [supabase, user]);
+  }, [supabase, user, update]);
 
   return [state, reset];
 };

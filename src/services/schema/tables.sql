@@ -90,6 +90,21 @@ create table direct_messages (
   constraint to_id foreign key(to_id) references profiles(id) on delete cascade
 );
 
+alter table direct_messages
+  enable row level security;
+
+create policy "Direct messages selected: from_id or to_id"
+  on direct_messages for select using (
+    auth.uid() = direct_messages.from_id
+    or
+    auth.uid() = direct_messages.to_id
+  );
+
+create policy "Direct messages inserted: authenticated"
+  on direct_messages for insert with check (
+    auth.role() = 'authenticated'
+  );
+
 create table room_messages (
   id uuid default extensions.uuid_generate_v4() primary key,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
@@ -112,12 +127,24 @@ create publication room_messages_insert
 --- rpc
 
 create or replace function public.post_message_to_room(content text, room_slug text)
-returns void language plpgsql as $$
+returns room_messages language plpgsql as $$
 declare
   room_id uuid;
+  message room_messages;
 begin
   select id from public.rooms where slug = $2 into room_id;
 
   insert into public.room_messages(content, room_id)
-  values ($1, room_id);
+  values ($1, room_id) returning * into message;
+
+  return message;
+end $$;
+
+create or replace function public.get_conversations()
+returns setof profiles language plpgsql as $$
+begin
+  return query
+    select distinct profiles.* from profiles
+    join direct_messages on direct_messages.from_id = profiles.id or direct_messages.to_id = profiles.id
+    where profiles.id != auth.uid();
 end $$;

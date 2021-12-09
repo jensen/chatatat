@@ -1,15 +1,11 @@
-import { useEffect, useState } from "react";
-import { ActionFunction, LoaderFunction, useTransition } from "remix";
-import { useLoaderData, json, redirect, useFetcher } from "remix";
+import { useEffect, useState, useCallback, useRef } from "react";
+import { LoaderFunction } from "remix";
+import { useLoaderData, json, useFetcher } from "remix";
 import MessageList from "~/components/MessageList";
 import MessageInput from "~/components/MessageInput";
 import { supabase } from "~/util/auth";
-import {
-  useSupabaseSubscription,
-  useSupabaseUserCache,
-  useSupabase,
-} from "~/context/supabase";
-import { indexed } from "~/util/transform";
+import { useSupabaseSubscription } from "~/context/supabase";
+import useMessages from "~/hooks/useMessages";
 
 type RoomData = {
   messages: IMessageResource[];
@@ -25,18 +21,11 @@ export let loader: LoaderFunction = async ({ request, params }) => {
     .match({ slug: params.slug })
     .single();
 
-  const { data: messages } = await db
-    .from<IRoomMessageResource>("room_messages")
-    .select("*")
-    .match({ room_id: room?.id });
-
-  return json({ messages, room });
+  return json({ room });
 };
 
 interface IRoomViewProps {
-  messages: IMessageResource[];
   room: IRoomResource;
-  users: IUserResource[];
 }
 
 interface IPendingMessage {
@@ -44,32 +33,25 @@ interface IPendingMessage {
   user_id: string;
 }
 
-const View = (props: IRoomViewProps) => {
-  const [messages, reset] = useSupabaseSubscription(
-    `room_messages:room_id=eq.${props.room.id}`
+const useRoomMessages = (
+  room: { id: string; slug: string },
+  reset: () => void
+) => {
+  const { messages, addMessage, MessageForm } = useMessages(
+    `/rooms/${room.slug}`,
+    reset
   );
 
-  const [pending, setPending] = useState<IPendingMessage[]>([]);
+  useSupabaseSubscription(`room_messages:room_id=eq.${room.id}`, addMessage);
 
-  const transition = useTransition();
+  return [messages, MessageForm];
+};
 
-  useEffect(() => {
-    if (transition.state === "idle") {
-      setPending([]);
-      reset();
-    }
-
-    if (transition.state === "submitting") {
-      setPending((prev) => [
-        ...prev,
-        {
-          ...(Object.fromEntries(
-            transition.submission.formData
-          ) as unknown as IPendingMessage),
-        },
-      ]);
-    }
-  }, [transition.state, transition.submission, reset]);
+const View = (props: IRoomViewProps) => {
+  const formRef = useRef<HTMLFormElement>();
+  const [messages, MessageForm] = useRoomMessages(props.room, () =>
+    formRef.current?.reset()
+  );
 
   return (
     <section className="h-full flex flex-col">
@@ -79,12 +61,15 @@ const View = (props: IRoomViewProps) => {
           {props.room.topic ? props.room.topic : "Set Topic"}
         </h3>
       </header>
-      <MessageList
-        messages={[...props.messages, ...messages]}
-        pending={pending}
-      />
+      <MessageList messages={messages} />
       <div className="">
-        <MessageInput />
+        <MessageForm
+          ref={formRef}
+          method="post"
+          action={`/rooms/${props.room.slug}/messages`}
+        >
+          <MessageInput />
+        </MessageForm>
       </div>
     </section>
   );

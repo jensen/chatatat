@@ -18,6 +18,8 @@ import AuthProvider from "~/context/auth";
 import { indexed } from "./util/transform";
 import create from "~/util/session.server";
 
+import Sidebar from "~/components/Sidebar";
+
 import compiledStyles from "~/styles/compiled.css";
 
 export let meta: MetaFunction = () => {
@@ -38,10 +40,14 @@ export let loader: LoaderFunction = async ({ request }) => {
   const session = await getSession(request.headers.get("Cookie"));
   const token = session.get("token");
 
-  const { data: users, error } = await db.from("profiles").select();
+  const { data: users } = await db.from<IUserResource>("profiles").select();
+  const { data: rooms } = await db.from<IRoomResource>("rooms").select();
+  const { data: conversations } = await db.rpc("get_conversations");
 
   return json({
     users: indexed(users || []),
+    rooms,
+    conversations,
     token,
     env: {
       SUPABASE_URL: process.env.SUPABASE_URL,
@@ -156,19 +162,16 @@ function Document({
     </html>
   );
 }
-import DiscordButton from "~/components/DiscordButton";
+
 function Layout({ children }: { children: React.ReactNode }) {
+  const { rooms, conversations } = useLoaderData();
+
   return (
     <main className="h-full flex flex-col">
-      <header className="pl-6 pr-2 py-2 bg-indigo-800 text-yellow-400 flex justify-between items-center">
-        <h2 className="text-2xl">
-          <span className="font-bold">Another</span>
-          <span className="font-light">Chat</span>
-        </h2>
-        <DiscordButton />
-      </header>
-      <div className="flex-1 overflow-hidden">{children}</div>
-      {/* <footer className="h-8 bg-yellow-400 rounded-full text-white"></footer> */}
+      <div className="h-full flex">
+        <Sidebar rooms={rooms} conversations={conversations} />
+        <main className="flex-1 bg-midnight">{children}</main>
+      </div>
     </main>
   );
 }

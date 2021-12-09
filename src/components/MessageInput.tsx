@@ -1,13 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { Form, useTransition } from "remix";
 import { useSupabaseUser } from "~/context/supabase";
+import { v4 as uuid } from "uuid";
 
 interface IMessageInputProps {}
 
 export default function MessageInput(props: IMessageInputProps) {
   const inputRef = useRef(null);
-  const transition = useTransition();
-  const [content, setContent] = useState("");
   const user = useSupabaseUser();
 
   useEffect(() => {
@@ -16,25 +14,27 @@ export default function MessageInput(props: IMessageInputProps) {
     }
   }, []);
 
-  useEffect(() => {
-    if (transition.submission) {
-      setContent("");
-    }
-  }, [transition.submission]);
+  const mustLogin =
+    user === null
+      ? {
+          placeholder: "Must login to send a message.",
+          disabled: true,
+        }
+      : {};
 
   return (
-    <div className="p-4">
-      <div className="bg-dusk rounded-lg">
-        <Form method="post" action="messages">
-          <input value={user?.id || ""} name="user_id" type="hidden" />
-          <input
-            value={content}
-            onChange={(event) => setContent(event.target.value)}
-            name="content"
-            ref={inputRef}
-            className="py-2 px-4 w-full bg-transparent focus:outline-none"
-          />
-        </Form>
+    <div className="p-2">
+      <div className="border-gray-900 border-4 p-1 rounded-xl">
+        <input value={uuid()} name="local_id" type="hidden" />
+        <input value={user?.id || ""} name="user_id" type="hidden" />
+        <input value={user?.id || ""} name="from_id" type="hidden" />
+        <input
+          name="content"
+          ref={inputRef}
+          className="bg-dusk py-1 px-2 w-full rounded-lg focus:outline-none disabled:opacity-50"
+          type="text"
+          {...mustLogin}
+        />
       </div>
     </div>
   );

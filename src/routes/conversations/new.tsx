@@ -24,8 +24,6 @@ export default function NewRoom() {
   const { users } = useSupabaseUserCache();
   const navigate = useNavigate();
 
-  const [selected, setSelected] = useState(null);
-
   const close = () => navigate(-1);
 
   return (
@@ -75,7 +73,11 @@ export default function NewRoom() {
                 <div className="mt-4 h-96 overflow-hidden">
                   <ul className="space-y-2">
                     {Object.values(users).map((user) => (
-                      <Link to={`/conversations/${user.id}`}>
+                      <Link
+                        key={user.id}
+                        className="block"
+                        to={`/conversations/${user.id}`}
+                      >
                         <li className="flex items-center">
                           <img
                             className="w-8 h-8 rounded-full mr-4"
