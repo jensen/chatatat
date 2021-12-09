@@ -56,7 +56,7 @@ const View = (props: IRoomViewProps) => {
   return (
     <section className="h-full flex flex-col">
       <header className="bg-dusk px-4 py-2 shadow-md">
-        <h2 className="uppercase text-sm text-gray-200">{props.room.name}</h2>
+        <h2 className="uppercase text-sm text-gray-400">#{props.room.name}</h2>
         <h3 className="text-xs text-gray-400">
           {props.room.topic ? props.room.topic : "Set Topic"}
         </h3>
