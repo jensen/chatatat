@@ -4,6 +4,8 @@ This project was completed as part of a group learning exercise. This project us
 
 ## Demo
 
+![demo](https://user-images.githubusercontent.com/14803/145367610-1f3460a2-1a94-40f2-b689-29b4fed7eb98.png)
+
 [https://chatatat.netlify.app/](https://chatatat.netlify.app/)
 
 ## Project Features
