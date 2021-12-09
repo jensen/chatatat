@@ -144,7 +144,7 @@ create or replace function public.get_conversations()
 returns setof profiles language plpgsql as $$
 begin
   return query
-    select distinct profiles.* from profiles
-    join direct_messages on direct_messages.from_id = profiles.id or direct_messages.to_id = profiles.id
-    where profiles.id != auth.uid();
+    select distinct profiles.* from direct_messages
+    join profiles on direct_messages.from_id = profiles.id or direct_messages.to_id = profiles.id
+    where (direct_messages.from_id = auth.uid() or direct_messages.to_id = auth.uid()) and profiles.id != auth.uid();
 end $$;
