@@ -51,7 +51,12 @@ const View = (props: IRoomViewProps) => {
   return (
     <section className="h-full flex flex-col">
       <header className="bg-dusk px-4 py-2 shadow-md">
-        <h2 className="uppercase text-sm text-gray-200">{props.user.name}</h2>
+        <h2 className="uppercase text-sm text-gray-200 flex items-center">
+          <img className="w-8 h-8 rounded-full" src={props.user.avatar} />
+          <span className="ml-2 text-gray-400 font-bold">
+            {props.user.name}
+          </span>
+        </h2>
       </header>
       <MessageList messages={messages} />
       <div className="">

@@ -5,7 +5,7 @@ import AddButton from "~/components/AddButton";
 
 interface ISidebarListProps {
   title: string;
-  items: { id: string; slug?: string; name: string }[];
+  items: { id: string; slug?: string; name: string; avatar?: string }[];
   path: string;
 }
 
@@ -30,10 +30,17 @@ export default function SidebarList(props: ISidebarListProps) {
           >
             <NavLink
               to={`${props.path}/${item.slug || item.id}`}
-              className="block -full px-2 py-1 rounded"
+              className="px-2 py-1 rounded flex items-center"
               style={({ isActive }) => (isActive ? activeStyle : {})}
             >
-              {item.name}
+              {item.avatar ? (
+                <>
+                  <img className="w-4 h-4 rounded-full" src={item.avatar} />
+                  <span className="ml-2">{item.name}</span>
+                </>
+              ) : (
+                item.name
+              )}
             </NavLink>
           </li>
         ))}
