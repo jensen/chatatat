@@ -19,8 +19,9 @@ export default function Sidebar(props) {
           <Logo />
 
           <div className="pl-2">
-            <h2 className="text-xl font-bold text-gray-100">Chat</h2>
-            <h3 className="text-xs font-light text-gray-300"></h3>
+            <h2 className="text-xl font-bold text-gray-100">
+              Chat<span className="text-gray-500">@@</span>
+            </h2>
           </div>
         </header>
       </Link>
