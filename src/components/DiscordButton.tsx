@@ -1,6 +1,13 @@
+import { useLocation } from "react-router";
+
 export default function DiscordButton() {
+  const location = useLocation();
+
   return (
-    <form method="post" action="/auth/discord">
+    <form
+      method="post"
+      action={`/auth/discord?redirect_to=${location.pathname}`}
+    >
       <button
         type="submit"
         className="bg-discord px-4 py-2 rounded-full flex items-center hover:bg-yellow-400"

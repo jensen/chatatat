@@ -168,7 +168,7 @@ function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <main className="h-full flex flex-col">
-      <div className="h-full flex">
+      <div className="h-full flex flex-col sm:flex-row">
         <Sidebar rooms={rooms} conversations={conversations} />
         <main className="flex-1 bg-midnight">{children}</main>
       </div>

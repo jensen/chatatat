@@ -15,7 +15,11 @@ export let action: ActionFunction = async ({ request, params, context }) => {
       provider: "discord",
     },
     {
-      redirectTo: `${process.env.CLIENT_URL}/auth/discord/callback?redirect_to=/rooms`,
+      redirectTo: `${
+        process.env.CLIENT_URL
+      }/auth/discord/callback?redirect_to=${new URL(
+        request.url
+      ).searchParams.get("redirect_to")}`,
     }
   );
 

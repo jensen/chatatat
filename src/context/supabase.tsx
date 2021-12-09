@@ -136,7 +136,7 @@ export const useSupabaseSubscription = (
         supabase.removeSubscription(subscription);
       };
     }
-  }, [supabase, user, update]);
+  }, [supabase, user, update, table]);
 
   return [state, reset];
 };

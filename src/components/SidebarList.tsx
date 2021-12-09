@@ -1,7 +1,6 @@
 import { NavLink } from "remix";
 import cx from "classnames";
 
-import { useSupabaseUser } from "~/context/supabase";
 import AddButton from "~/components/AddButton";
 
 interface ISidebarListProps {
@@ -17,13 +16,9 @@ const activeStyle = {
 };
 
 export default function SidebarList(props: ISidebarListProps) {
-  const user = useSupabaseUser();
-
-  if (user === null) return null;
-
   return (
     <section className="px-4">
-      <header className="px-2 py-4 text-gray-400 font-bold text-xs uppercase flex justify-between">
+      <header className="px-2 py-4 text-gray-400 font-bold text-sm uppercase flex justify-between">
         {props.title}
         <AddButton to={`${props.path}/new`} />
       </header>
