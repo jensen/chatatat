@@ -2,10 +2,12 @@ import { NavLink } from "remix";
 import cx from "classnames";
 
 import { useSupabaseUser } from "~/context/supabase";
-import AddConversation from "~/components/AddConversation";
+import AddButton from "~/components/AddButton";
 
-interface IConversationListProps {
-  conversations: any[];
+interface ISidebarListProps {
+  title: string;
+  items: { id: string; slug?: string; name: string }[];
+  path: string;
 }
 
 const activeStyle = {
@@ -14,7 +16,7 @@ const activeStyle = {
   boxShadow: "2px 2px 4px 1px rgba(0, 0, 0, 0.2)",
 };
 
-export default function ConversationList(props: IConversationListProps) {
+export default function SidebarList(props: ISidebarListProps) {
   const user = useSupabaseUser();
 
   if (user === null) return null;
@@ -22,21 +24,21 @@ export default function ConversationList(props: IConversationListProps) {
   return (
     <section className="px-4">
       <header className="px-2 py-4 text-gray-400 font-bold text-xs uppercase flex justify-between">
-        Conversations
-        <AddConversation />
+        {props.title}
+        <AddButton to={`${props.path}/new`} />
       </header>
       <ul className="w-64 h-full">
-        {props.conversations.map((conversation) => (
+        {props.items.map((item) => (
           <li
-            key={conversation.id}
+            key={item.id}
             className={cx("w-full text-gray-400 hover:text-gray-200 text-sm")}
           >
             <NavLink
-              to={`/conversations/${conversation.id}`}
+              to={`${props.path}/${item.slug || item.id}`}
               className="block -full px-2 py-1 rounded"
               style={({ isActive }) => (isActive ? activeStyle : {})}
             >
-              {conversation.name}
+              {item.name}
             </NavLink>
           </li>
         ))}

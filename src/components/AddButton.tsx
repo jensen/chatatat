@@ -1,13 +1,17 @@
 import { Link } from "remix";
 import { useSupabaseUser } from "~/context/supabase";
 
-export default function AddRoom() {
+interface IAddButtonProps {
+  to: string;
+}
+
+export default function AddButton(props: IAddButtonProps) {
   const user = useSupabaseUser();
 
   if (user === null) return null;
 
   return (
-    <Link to="/rooms/new">
+    <Link to={props.to}>
       <div className="bg-yellow-400 w-4 h-4 rounded-full flex justify-center items-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"

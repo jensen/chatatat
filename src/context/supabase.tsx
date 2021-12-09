@@ -43,6 +43,21 @@ export default function SupabaseProvider(props: ISupabaseProviderProps) {
     });
   }, [props.token]);
 
+  useEffect(() => {
+    if (supabase) {
+      const subscription = supabase
+        .from("profiles")
+        .on("INSERT", (payload) =>
+          setUsers((prev) => ({ ...prev, [payload.new.id]: payload.new }))
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeSubscription(subscription);
+      };
+    }
+  }, [supabase]);
+
   return (
     <SupabaseContext.Provider value={{ supabase, user, users }}>
       {user !== undefined && props.children}

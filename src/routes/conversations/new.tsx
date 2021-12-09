@@ -1,9 +1,9 @@
 import type { ActionFunction } from "remix";
 import { useNavigate, redirect, Link, Form } from "remix";
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import { supabase } from "~/util/auth";
-import { useSupabaseUserCache } from "~/context/supabase";
+import { useSupabaseUserCache, useSupabaseUser } from "~/context/supabase";
 
 export let action: ActionFunction = async ({ request, params }) => {
   const db = await supabase(request);
@@ -21,6 +21,7 @@ export let action: ActionFunction = async ({ request, params }) => {
 };
 
 export default function NewRoom() {
+  const u = useSupabaseUser();
   const { users } = useSupabaseUserCache();
   const navigate = useNavigate();
 
@@ -72,21 +73,23 @@ export default function NewRoom() {
               <Form method="post">
                 <div className="mt-4 h-96 overflow-hidden">
                   <ul className="space-y-2">
-                    {Object.values(users).map((user) => (
-                      <Link
-                        key={user.id}
-                        className="block"
-                        to={`/conversations/${user.id}`}
-                      >
-                        <li className="flex items-center">
-                          <img
-                            className="w-8 h-8 rounded-full mr-4"
-                            src={user.avatar}
-                          />
-                          {user.name}
-                        </li>
-                      </Link>
-                    ))}
+                    {Object.values(users)
+                      .filter((user) => user.id !== u?.id)
+                      .map((user) => (
+                        <Link
+                          key={user.id}
+                          className="block"
+                          to={`/conversations/${user.id}`}
+                        >
+                          <li className="flex items-center">
+                            <img
+                              className="w-8 h-8 rounded-full mr-4"
+                              src={user.avatar}
+                            />
+                            {user.name}
+                          </li>
+                        </Link>
+                      ))}
                   </ul>
                 </div>
                 <div className="mt-6 space-x-2">

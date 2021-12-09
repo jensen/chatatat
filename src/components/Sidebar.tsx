@@ -1,6 +1,5 @@
 import Logo from "~/components/Logo";
-import RoomList from "~/components/RoomList";
-import ConversationList from "~/components/ConversationList";
+import SidebarList from "~/components/SidebarList";
 import DiscordButton from "~/components/DiscordButton";
 
 import { useSupabaseUser } from "~/context/supabase";
@@ -20,9 +19,13 @@ export default function Sidebar(props) {
       <section className="px-4 py-2">
         {user === null && <DiscordButton />}
       </section>
-      <RoomList rooms={props.rooms} />
+      <SidebarList title="Rooms" items={props.rooms} path="/rooms" />
       <br />
-      <ConversationList conversations={props.conversations} />
+      <SidebarList
+        title="Conversations"
+        items={props.conversations}
+        path="/conversations"
+      />
     </aside>
   );
 }
