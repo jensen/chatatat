@@ -1,6 +1,10 @@
-import { LoaderAction, ActionFunction } from "remix";
-import { redirect, json } from "remix";
-import { supabase, user } from "~/util/auth";
+import type {
+  IRoomResource,
+  IRoomMessageResource,
+} from "~/services/types/resources";
+import { LoaderFunction, ActionFunction } from "remix";
+import { json } from "remix";
+import { supabase } from "~/util/auth";
 
 export let action: ActionFunction = async ({ request, params }) => {
   const db = await supabase(request);
@@ -14,7 +18,7 @@ export let action: ActionFunction = async ({ request, params }) => {
   return json({ ...data, local_id: body.get("local_id") });
 };
 
-export let loader: LoaderAction = async ({ request, params }) => {
+export let loader: LoaderFunction = async ({ request, params }) => {
   const db = await supabase(request);
 
   const { data: room } = await db

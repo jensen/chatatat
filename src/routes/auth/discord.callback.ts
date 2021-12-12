@@ -1,8 +1,8 @@
-import type { ActionFunction, LoaderFunction } from "remix";
+import type { LoaderFunction } from "remix";
 import { redirect } from "remix";
 import create from "~/util/session.server";
 
-export let loader: LoaderFunction = async ({ request, params, context }) => {
+export let loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
   const token = url.searchParams.get("access_token");
   const local = url.searchParams.get("redirect_to");

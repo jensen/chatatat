@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Link, useNavigate } from "remix";
 import { useLocation } from "react-router";
 import { useSupabaseUser } from "~/context/supabase";

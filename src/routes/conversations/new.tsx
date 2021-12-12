@@ -1,24 +1,7 @@
-import type { ActionFunction } from "remix";
-import { useNavigate, redirect, Link, Form } from "remix";
+import { useNavigate, Link } from "remix";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
-import { supabase } from "~/util/auth";
 import { useSupabaseUserCache, useSupabaseUser } from "~/context/supabase";
-
-export let action: ActionFunction = async ({ request, params }) => {
-  const db = await supabase(request);
-  const body = await request.formData();
-
-  const { data, error } = await db
-    .from<IRoomResource>("rooms")
-    .insert({
-      name: body.get("name"),
-      topic: body.get("topic"),
-    })
-    .single();
-
-  return redirect(`/rooms/${data.slug}`);
-};
 
 export default function NewRoom() {
   const u = useSupabaseUser();
@@ -70,38 +53,36 @@ export default function NewRoom() {
               >
                 Message User
               </Dialog.Title>
-              <Form method="post">
-                <div className="mt-4 h-96 overflow-hidden">
-                  <ul className="space-y-2">
-                    {Object.values(users)
-                      .filter((user) => user.id !== u?.id)
-                      .map((user) => (
-                        <Link
-                          key={user.id}
-                          className="block"
-                          to={`/conversations/${user.id}`}
-                        >
-                          <li className="flex items-center">
-                            <img
-                              className="w-8 h-8 rounded-full mr-4"
-                              src={user.avatar}
-                            />
-                            {user.name}
-                          </li>
-                        </Link>
-                      ))}
-                  </ul>
-                </div>
-                <div className="mt-6 space-x-2">
-                  <button
-                    type="button"
-                    className="inline-flex justify-center px-4 py-2 text-sm font-medium text-indigo-600 bg-indigo-300 border border-transparent rounded-md hover:bg-indigo-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500"
-                    onClick={close}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </Form>
+              <div className="mt-4 h-96 overflow-hidden">
+                <ul className="space-y-2">
+                  {Object.values(users)
+                    .filter((user) => user.id !== u?.id)
+                    .map((user) => (
+                      <Link
+                        key={user.id}
+                        className="block"
+                        to={`/conversations/${user.id}`}
+                      >
+                        <li className="flex items-center">
+                          <img
+                            className="w-8 h-8 rounded-full mr-4"
+                            src={user.avatar}
+                          />
+                          {user.name}
+                        </li>
+                      </Link>
+                    ))}
+                </ul>
+              </div>
+              <div className="mt-6 space-x-2">
+                <button
+                  type="button"
+                  className="inline-flex justify-center px-4 py-2 text-sm font-medium text-indigo-600 bg-indigo-300 border border-transparent rounded-md hover:bg-indigo-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500"
+                  onClick={close}
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </Transition.Child>
         </div>

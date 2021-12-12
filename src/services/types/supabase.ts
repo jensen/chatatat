@@ -12,10 +12,16 @@ export interface paths {
       };
     };
   };
-  "/room_messages": {
+  "/direct_messages": {
     get: {
       parameters: {
         query: {
+          id?: parameters["rowFilter.direct_messages.id"];
+          created_at?: parameters["rowFilter.direct_messages.created_at"];
+          updated_at?: parameters["rowFilter.direct_messages.updated_at"];
+          content?: parameters["rowFilter.direct_messages.content"];
+          from_id?: parameters["rowFilter.direct_messages.from_id"];
+          to_id?: parameters["rowFilter.direct_messages.to_id"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -37,7 +43,7 @@ export interface paths {
       responses: {
         /** OK */
         200: {
-          schema: definitions["room_messages"][];
+          schema: definitions["direct_messages"][];
         };
         /** Partial Content */
         206: unknown;
@@ -46,8 +52,8 @@ export interface paths {
     post: {
       parameters: {
         body: {
-          /** room_messages */
-          room_messages?: definitions["room_messages"];
+          /** direct_messages */
+          direct_messages?: definitions["direct_messages"];
         };
         query: {
           /** Filtering Columns */
@@ -65,6 +71,14 @@ export interface paths {
     };
     delete: {
       parameters: {
+        query: {
+          id?: parameters["rowFilter.direct_messages.id"];
+          created_at?: parameters["rowFilter.direct_messages.created_at"];
+          updated_at?: parameters["rowFilter.direct_messages.updated_at"];
+          content?: parameters["rowFilter.direct_messages.content"];
+          from_id?: parameters["rowFilter.direct_messages.from_id"];
+          to_id?: parameters["rowFilter.direct_messages.to_id"];
+        };
         header: {
           /** Preference */
           Prefer?: parameters["preferReturn"];
@@ -77,249 +91,17 @@ export interface paths {
     };
     patch: {
       parameters: {
-        body: {
-          /** room_messages */
-          room_messages?: definitions["room_messages"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** No Content */
-        204: never;
-      };
-    };
-  };
-  "/rooms": {
-    get: {
-      parameters: {
         query: {
-          /** Filtering Columns */
-          select?: parameters["select"];
-          /** Ordering */
-          order?: parameters["order"];
-          /** Limiting and Pagination */
-          offset?: parameters["offset"];
-          /** Limiting and Pagination */
-          limit?: parameters["limit"];
+          id?: parameters["rowFilter.direct_messages.id"];
+          created_at?: parameters["rowFilter.direct_messages.created_at"];
+          updated_at?: parameters["rowFilter.direct_messages.updated_at"];
+          content?: parameters["rowFilter.direct_messages.content"];
+          from_id?: parameters["rowFilter.direct_messages.from_id"];
+          to_id?: parameters["rowFilter.direct_messages.to_id"];
         };
-        header: {
-          /** Limiting and Pagination */
-          Range?: parameters["range"];
-          /** Limiting and Pagination */
-          "Range-Unit"?: parameters["rangeUnit"];
-          /** Preference */
-          Prefer?: parameters["preferCount"];
-        };
-      };
-      responses: {
-        /** OK */
-        200: {
-          schema: definitions["rooms"][];
-        };
-        /** Partial Content */
-        206: unknown;
-      };
-    };
-    post: {
-      parameters: {
         body: {
-          /** rooms */
-          rooms?: definitions["rooms"];
-        };
-        query: {
-          /** Filtering Columns */
-          select?: parameters["select"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** Created */
-        201: unknown;
-      };
-    };
-    delete: {
-      parameters: {
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** No Content */
-        204: never;
-      };
-    };
-    patch: {
-      parameters: {
-        body: {
-          /** rooms */
-          rooms?: definitions["rooms"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** No Content */
-        204: never;
-      };
-    };
-  };
-  "/messages": {
-    get: {
-      parameters: {
-        query: {
-          /** Filtering Columns */
-          select?: parameters["select"];
-          /** Ordering */
-          order?: parameters["order"];
-          /** Limiting and Pagination */
-          offset?: parameters["offset"];
-          /** Limiting and Pagination */
-          limit?: parameters["limit"];
-        };
-        header: {
-          /** Limiting and Pagination */
-          Range?: parameters["range"];
-          /** Limiting and Pagination */
-          "Range-Unit"?: parameters["rangeUnit"];
-          /** Preference */
-          Prefer?: parameters["preferCount"];
-        };
-      };
-      responses: {
-        /** OK */
-        200: {
-          schema: definitions["messages"][];
-        };
-        /** Partial Content */
-        206: unknown;
-      };
-    };
-    post: {
-      parameters: {
-        body: {
-          /** messages */
-          messages?: definitions["messages"];
-        };
-        query: {
-          /** Filtering Columns */
-          select?: parameters["select"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** Created */
-        201: unknown;
-      };
-    };
-    delete: {
-      parameters: {
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** No Content */
-        204: never;
-      };
-    };
-    patch: {
-      parameters: {
-        body: {
-          /** messages */
-          messages?: definitions["messages"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** No Content */
-        204: never;
-      };
-    };
-  };
-  "/private_messages": {
-    get: {
-      parameters: {
-        query: {
-          /** Filtering Columns */
-          select?: parameters["select"];
-          /** Ordering */
-          order?: parameters["order"];
-          /** Limiting and Pagination */
-          offset?: parameters["offset"];
-          /** Limiting and Pagination */
-          limit?: parameters["limit"];
-        };
-        header: {
-          /** Limiting and Pagination */
-          Range?: parameters["range"];
-          /** Limiting and Pagination */
-          "Range-Unit"?: parameters["rangeUnit"];
-          /** Preference */
-          Prefer?: parameters["preferCount"];
-        };
-      };
-      responses: {
-        /** OK */
-        200: {
-          schema: definitions["private_messages"][];
-        };
-        /** Partial Content */
-        206: unknown;
-      };
-    };
-    post: {
-      parameters: {
-        body: {
-          /** private_messages */
-          private_messages?: definitions["private_messages"];
-        };
-        query: {
-          /** Filtering Columns */
-          select?: parameters["select"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** Created */
-        201: unknown;
-      };
-    };
-    delete: {
-      parameters: {
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** No Content */
-        204: never;
-      };
-    };
-    patch: {
-      parameters: {
-        body: {
-          /** private_messages */
-          private_messages?: definitions["private_messages"];
+          /** direct_messages */
+          direct_messages?: definitions["direct_messages"];
         };
         header: {
           /** Preference */
@@ -336,6 +118,9 @@ export interface paths {
     get: {
       parameters: {
         query: {
+          id?: parameters["rowFilter.profiles.id"];
+          name?: parameters["rowFilter.profiles.name"];
+          avatar?: parameters["rowFilter.profiles.avatar"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -385,6 +170,11 @@ export interface paths {
     };
     delete: {
       parameters: {
+        query: {
+          id?: parameters["rowFilter.profiles.id"];
+          name?: parameters["rowFilter.profiles.name"];
+          avatar?: parameters["rowFilter.profiles.avatar"];
+        };
         header: {
           /** Preference */
           Prefer?: parameters["preferReturn"];
@@ -397,6 +187,11 @@ export interface paths {
     };
     patch: {
       parameters: {
+        query: {
+          id?: parameters["rowFilter.profiles.id"];
+          name?: parameters["rowFilter.profiles.name"];
+          avatar?: parameters["rowFilter.profiles.avatar"];
+        };
         body: {
           /** profiles */
           profiles?: definitions["profiles"];
@@ -416,6 +211,9 @@ export interface paths {
     get: {
       parameters: {
         query: {
+          id?: parameters["rowFilter.profiles_private.id"];
+          email?: parameters["rowFilter.profiles_private.email"];
+          admin?: parameters["rowFilter.profiles_private.admin"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -465,6 +263,11 @@ export interface paths {
     };
     delete: {
       parameters: {
+        query: {
+          id?: parameters["rowFilter.profiles_private.id"];
+          email?: parameters["rowFilter.profiles_private.email"];
+          admin?: parameters["rowFilter.profiles_private.admin"];
+        };
         header: {
           /** Preference */
           Prefer?: parameters["preferReturn"];
@@ -477,6 +280,11 @@ export interface paths {
     };
     patch: {
       parameters: {
+        query: {
+          id?: parameters["rowFilter.profiles_private.id"];
+          email?: parameters["rowFilter.profiles_private.email"];
+          admin?: parameters["rowFilter.profiles_private.admin"];
+        };
         body: {
           /** profiles_private */
           profiles_private?: definitions["profiles_private"];
@@ -489,6 +297,232 @@ export interface paths {
       responses: {
         /** No Content */
         204: never;
+      };
+    };
+  };
+  "/room_messages": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.room_messages.id"];
+          created_at?: parameters["rowFilter.room_messages.created_at"];
+          updated_at?: parameters["rowFilter.room_messages.updated_at"];
+          content?: parameters["rowFilter.room_messages.content"];
+          user_id?: parameters["rowFilter.room_messages.user_id"];
+          room_id?: parameters["rowFilter.room_messages.room_id"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["room_messages"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** room_messages */
+          room_messages?: definitions["room_messages"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.room_messages.id"];
+          created_at?: parameters["rowFilter.room_messages.created_at"];
+          updated_at?: parameters["rowFilter.room_messages.updated_at"];
+          content?: parameters["rowFilter.room_messages.content"];
+          user_id?: parameters["rowFilter.room_messages.user_id"];
+          room_id?: parameters["rowFilter.room_messages.room_id"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.room_messages.id"];
+          created_at?: parameters["rowFilter.room_messages.created_at"];
+          updated_at?: parameters["rowFilter.room_messages.updated_at"];
+          content?: parameters["rowFilter.room_messages.content"];
+          user_id?: parameters["rowFilter.room_messages.user_id"];
+          room_id?: parameters["rowFilter.room_messages.room_id"];
+        };
+        body: {
+          /** room_messages */
+          room_messages?: definitions["room_messages"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
+  "/rooms": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.rooms.id"];
+          created_at?: parameters["rowFilter.rooms.created_at"];
+          updated_at?: parameters["rowFilter.rooms.updated_at"];
+          slug?: parameters["rowFilter.rooms.slug"];
+          name?: parameters["rowFilter.rooms.name"];
+          topic?: parameters["rowFilter.rooms.topic"];
+          user_id?: parameters["rowFilter.rooms.user_id"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["rooms"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** rooms */
+          rooms?: definitions["rooms"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.rooms.id"];
+          created_at?: parameters["rowFilter.rooms.created_at"];
+          updated_at?: parameters["rowFilter.rooms.updated_at"];
+          slug?: parameters["rowFilter.rooms.slug"];
+          name?: parameters["rowFilter.rooms.name"];
+          topic?: parameters["rowFilter.rooms.topic"];
+          user_id?: parameters["rowFilter.rooms.user_id"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.rooms.id"];
+          created_at?: parameters["rowFilter.rooms.created_at"];
+          updated_at?: parameters["rowFilter.rooms.updated_at"];
+          slug?: parameters["rowFilter.rooms.slug"];
+          name?: parameters["rowFilter.rooms.name"];
+          topic?: parameters["rowFilter.rooms.topic"];
+          user_id?: parameters["rowFilter.rooms.user_id"];
+        };
+        body: {
+          /** rooms */
+          rooms?: definitions["rooms"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
+  "/rpc/unaccent_lexize": {
+    post: {
+      parameters: {
+        body: {
+          args: {
+            "": string;
+          };
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferParams"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: unknown;
       };
     };
   };
@@ -509,15 +543,177 @@ export interface paths {
       };
     };
   };
+  "/rpc/get_conversations": {
+    post: {
+      parameters: {
+        body: {
+          args: { [key: string]: unknown };
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferParams"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: unknown;
+      };
+    };
+  };
+  "/rpc/post_message_to_room": {
+    post: {
+      parameters: {
+        body: {
+          args: {
+            room_slug: string;
+            content: string;
+          };
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferParams"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: unknown;
+      };
+    };
+  };
+  "/rpc/unaccent_init": {
+    post: {
+      parameters: {
+        body: {
+          args: {
+            "": string;
+          };
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferParams"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: unknown;
+      };
+    };
+  };
+  "/rpc/unaccent": {
+    post: {
+      parameters: {
+        body: {
+          args: {
+            "": string;
+          };
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferParams"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: unknown;
+      };
+    };
+  };
+  "/rpc/slugify": {
+    post: {
+      parameters: {
+        body: {
+          args: { [key: string]: unknown };
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferParams"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: unknown;
+      };
+    };
+  };
 }
 
 export interface definitions {
-  room_messages: { [key: string]: unknown };
-  rooms: { [key: string]: unknown };
-  messages: { [key: string]: unknown };
-  private_messages: { [key: string]: unknown };
-  profiles: { [key: string]: unknown };
-  profiles_private: { [key: string]: unknown };
+  direct_messages: {
+    /**
+     * Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: string;
+    created_at: string;
+    updated_at: string;
+    content: string;
+    /**
+     * Note:
+     * This is a Foreign Key to `profiles.id`.<fk table='profiles' column='id'/>
+     */
+    from_id: string;
+    /**
+     * Note:
+     * This is a Foreign Key to `profiles.id`.<fk table='profiles' column='id'/>
+     */
+    to_id: string;
+  };
+  profiles: {
+    /**
+     * Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: string;
+    name?: string;
+    avatar?: string;
+  };
+  profiles_private: {
+    /**
+     * Note:
+     * This is a Primary Key.<pk/>
+     * This is a Foreign Key to `profiles.id`.<fk table='profiles' column='id'/>
+     */
+    id: string;
+    email?: string;
+    admin: boolean;
+  };
+  room_messages: {
+    /**
+     * Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: string;
+    created_at: string;
+    updated_at: string;
+    content: string;
+    /**
+     * Note:
+     * This is a Foreign Key to `profiles.id`.<fk table='profiles' column='id'/>
+     */
+    user_id: string;
+    /**
+     * Note:
+     * This is a Foreign Key to `rooms.id`.<fk table='rooms' column='id'/>
+     */
+    room_id: string;
+  };
+  rooms: {
+    /**
+     * Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: string;
+    created_at: string;
+    updated_at: string;
+    slug: string;
+    name: string;
+    topic: string;
+    /**
+     * Note:
+     * This is a Foreign Key to `profiles.id`.<fk table='profiles' column='id'/>
+     */
+    user_id: string;
+  };
 }
 
 export interface parameters {
@@ -541,18 +737,41 @@ export interface parameters {
   offset: string;
   /** Limiting and Pagination */
   limit: string;
-  /** room_messages */
-  "body.room_messages": definitions["room_messages"];
-  /** rooms */
-  "body.rooms": definitions["rooms"];
-  /** messages */
-  "body.messages": definitions["messages"];
-  /** private_messages */
-  "body.private_messages": definitions["private_messages"];
+  /** direct_messages */
+  "body.direct_messages": definitions["direct_messages"];
+  "rowFilter.direct_messages.id": string;
+  "rowFilter.direct_messages.created_at": string;
+  "rowFilter.direct_messages.updated_at": string;
+  "rowFilter.direct_messages.content": string;
+  "rowFilter.direct_messages.from_id": string;
+  "rowFilter.direct_messages.to_id": string;
   /** profiles */
   "body.profiles": definitions["profiles"];
+  "rowFilter.profiles.id": string;
+  "rowFilter.profiles.name": string;
+  "rowFilter.profiles.avatar": string;
   /** profiles_private */
   "body.profiles_private": definitions["profiles_private"];
+  "rowFilter.profiles_private.id": string;
+  "rowFilter.profiles_private.email": string;
+  "rowFilter.profiles_private.admin": string;
+  /** room_messages */
+  "body.room_messages": definitions["room_messages"];
+  "rowFilter.room_messages.id": string;
+  "rowFilter.room_messages.created_at": string;
+  "rowFilter.room_messages.updated_at": string;
+  "rowFilter.room_messages.content": string;
+  "rowFilter.room_messages.user_id": string;
+  "rowFilter.room_messages.room_id": string;
+  /** rooms */
+  "body.rooms": definitions["rooms"];
+  "rowFilter.rooms.id": string;
+  "rowFilter.rooms.created_at": string;
+  "rowFilter.rooms.updated_at": string;
+  "rowFilter.rooms.slug": string;
+  "rowFilter.rooms.name": string;
+  "rowFilter.rooms.topic": string;
+  "rowFilter.rooms.user_id": string;
 }
 
 export interface operations {}

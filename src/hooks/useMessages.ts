@@ -1,15 +1,21 @@
 import { useState, useEffect, useCallback } from "react";
 import { useFetcher } from "remix";
+import {
+  IConversationMessageResource,
+  IRoomMessageResource,
+} from "~/services/types/resources";
+
+interface IMessage extends IRoomMessageResource, IConversationMessageResource {
+  local_id?: string;
+}
 
 export default function useMessages(url: string, reset: () => void) {
-  const messages = useFetcher();
-  const [state, setState] = useState<IMessageResource>([]);
+  const messages = useFetcher<IMessage>();
+  const [state, setState] = useState<IMessage[]>([]);
 
   useEffect(() => {
     if (messages.data === undefined) return;
 
-    if (messages.data) {
-    }
     if (Array.isArray(messages.data)) {
       setState(messages.data);
     } else {
@@ -34,13 +40,14 @@ export default function useMessages(url: string, reset: () => void) {
       messages.state === "submitting" &&
       messages.type === "actionSubmission"
     ) {
-      setState((prev) => [
-        ...prev,
-        Object.fromEntries(messages.submission.formData),
-      ]);
+      const latest: IMessage = Object.fromEntries(
+        messages.submission.formData
+      ) as unknown as IMessage;
+
+      setState((prev) => [...prev, latest]);
       reset();
     }
-  }, [messages.state]);
+  }, [messages.state, messages.type, messages.submission?.formData, reset]);
 
   return {
     messages: state,

@@ -1,16 +1,15 @@
+import type { IUserResource } from "~/services/types/resources";
 import { useRef } from "react";
 import { LoaderFunction } from "remix";
 import { useLoaderData, json } from "remix";
 import MessageList from "~/components/MessageList";
 import MessageInput from "~/components/MessageInput";
 import { supabase } from "~/util/auth";
-import { useSupabaseSubscription, useSupabaseUser } from "~/context/supabase";
+import { useSupabaseSubscription } from "~/context/supabase";
 import useMessages from "~/hooks/useMessages";
 
-type RoomData = {
-  messages: IMessageResource[];
-  room: IRoomResource;
-  users: { [key: string]: IUserResource };
+type ConversationData = {
+  user: IUserResource;
 };
 
 export let loader: LoaderFunction = async ({ request, params }) => {
@@ -26,9 +25,7 @@ export let loader: LoaderFunction = async ({ request, params }) => {
 };
 
 interface IRoomViewProps {
-  messages: IMessageResource[];
-  room: IRoomResource;
-  users: IUserResource[];
+  user: IUserResource;
 }
 
 const useConversationMessages = (user: { id: string }, reset: () => void) => {

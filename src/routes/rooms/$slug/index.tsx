@@ -1,14 +1,21 @@
-import { useEffect, useState, useCallback, useRef } from "react";
+import type {
+  IRoomResource,
+  IRoomMessageResource,
+} from "~/services/types/resources";
+import { useRef } from "react";
 import { LoaderFunction } from "remix";
-import { useLoaderData, json, useFetcher } from "remix";
+import { useLoaderData, json } from "remix";
 import MessageList from "~/components/MessageList";
 import MessageInput from "~/components/MessageInput";
 import { supabase } from "~/util/auth";
-import { useSupabaseSubscription } from "~/context/supabase";
+import {
+  useSupabaseSubscription,
+  useSupabaseUserCache,
+} from "~/context/supabase";
 import useMessages from "~/hooks/useMessages";
 
 type RoomData = {
-  messages: IMessageResource[];
+  messages: IRoomMessageResource[];
   room: IRoomResource;
 };
 
@@ -26,11 +33,6 @@ export let loader: LoaderFunction = async ({ request, params }) => {
 
 interface IRoomViewProps {
   room: IRoomResource;
-}
-
-interface IPendingMessage {
-  id: string;
-  user_id: string;
 }
 
 const useRoomMessages = (
@@ -52,6 +54,7 @@ const View = (props: IRoomViewProps) => {
   const [messages, MessageForm] = useRoomMessages(props.room, () =>
     formRef.current?.reset()
   );
+  const { users } = useSupabaseUserCache();
 
   return (
     <section className="h-full flex flex-col">
@@ -61,7 +64,13 @@ const View = (props: IRoomViewProps) => {
           {props.room.topic ? props.room.topic : "Set Topic"}
         </h3>
       </header>
-      <MessageList messages={messages} />
+      <MessageList
+        messages={messages.map((message) => ({
+          id: message.id || message.local_id,
+          name: users[message.user_id || message.from_id].name,
+          content: message.content,
+        }))}
+      />
       <div className="">
         <MessageForm
           ref={formRef}

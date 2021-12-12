@@ -5,7 +5,7 @@ import { v4 as uuid } from "uuid";
 interface IMessageInputProps {}
 
 export default function MessageInput(props: IMessageInputProps) {
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const user = useSupabaseUser();
 
   useEffect(() => {

@@ -1,14 +1,19 @@
+import type {
+  IUserResource,
+  IRoomMessageResource,
+  IConversationMessageResource,
+} from "~/services/types/resources";
 import { SupabaseClient, AuthUser } from "@supabase/supabase-js";
 import React, { useEffect, useState, useContext, useCallback } from "react";
 import create from "~/services";
 
 interface IIndexedUsers {
-  [key: string]: IUser;
+  [key: string]: IUserResource;
 }
 
 interface ISupabaseContext {
   supabase: SupabaseClient | null;
-  user: AuthUser | null;
+  user: AuthUser | null | undefined;
   users: IIndexedUsers;
 }
 
@@ -60,7 +65,7 @@ export default function SupabaseProvider(props: ISupabaseProviderProps) {
 
   return (
     <SupabaseContext.Provider value={{ supabase, user, users }}>
-      {user !== undefined && props.children}
+      {props.children}
     </SupabaseContext.Provider>
   );
 }
@@ -107,7 +112,9 @@ export const useSupabaseSubscription = (
 ) => {
   const supabase = useSupabase();
   const user = useSupabaseUser();
-  const [state, setState] = useState<IMessageResource[]>([]);
+  const [state, setState] = useState<
+    IRoomMessageResource[] | IConversationMessageResource[]
+  >([]);
 
   const reset = useCallback(() => {
     setState([]);

@@ -1,22 +1,23 @@
+import type { IRoomResource } from "~/services/types/resources";
 import type { ActionFunction } from "remix";
 import { useNavigate, redirect, Form } from "remix";
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import { supabase } from "~/util/auth";
 
-export let action: ActionFunction = async ({ request, params }) => {
+export let action: ActionFunction = async ({ request }) => {
   const db = await supabase(request);
   const body = await request.formData();
 
   const { data, error } = await db
     .from<IRoomResource>("rooms")
     .insert({
-      name: body.get("name"),
-      topic: body.get("topic"),
+      name: body.get("name") as string,
+      topic: body.get("topic") as string,
     })
     .single();
 
-  return redirect(`/rooms/${data.slug}`);
+  return redirect(`/rooms/${data?.slug}`);
 };
 
 export default function NewRoom() {
