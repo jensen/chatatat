@@ -1,60 +1,47 @@
 import type {
-  IUserResource,
   IRoomMessageResource,
   IConversationMessageResource,
 } from "~/services/types/resources";
 import { SupabaseClient, AuthUser } from "@supabase/supabase-js";
 import React, { useEffect, useState, useContext, useCallback } from "react";
 import create from "~/services";
-
-interface IIndexedUsers {
-  [key: string]: IUserResource;
-}
+import { useUsersCache } from "./users";
 
 interface ISupabaseContext {
   supabase: SupabaseClient | null;
   user: AuthUser | null | undefined;
-  users: IIndexedUsers;
 }
 
 const SupabaseContext = React.createContext<ISupabaseContext>({
   supabase: null,
   user: null,
-  users: {},
 });
-
-interface IUser {
-  id: string;
-}
 
 interface ISupabaseProviderProps {
   token: string;
-  users: IIndexedUsers;
   children: React.ReactNode;
 }
 
 export default function SupabaseProvider(props: ISupabaseProviderProps) {
-  const [supabase, setSupabase] = useState<SupabaseClient | null>(() => null);
+  const { addUser } = useUsersCache();
+  const [supabase, setSupabase] = useState<SupabaseClient | null>(null);
   const [user, setUser] = useState<AuthUser | null | undefined>(undefined);
-  const [users, setUsers] = useState<IIndexedUsers>(props.users);
 
   useEffect(() => {
     const supabase = create(props.token);
 
     setSupabase(supabase);
 
-    supabase.auth.api.getUser(props.token).then(({ data, error }) => {
-      setUser(data);
-    });
+    supabase.auth.api
+      .getUser(props.token)
+      .then(({ data, error }) => setUser(data));
   }, [props.token]);
 
   useEffect(() => {
     if (supabase) {
       const subscription = supabase
         .from("profiles")
-        .on("INSERT", (payload) =>
-          setUsers((prev) => ({ ...prev, [payload.new.id]: payload.new }))
-        )
+        .on("INSERT", (payload) => addUser(payload.new))
         .subscribe();
 
       return () => {
@@ -64,7 +51,7 @@ export default function SupabaseProvider(props: ISupabaseProviderProps) {
   }, [supabase]);
 
   return (
-    <SupabaseContext.Provider value={{ supabase, user, users }}>
+    <SupabaseContext.Provider value={{ supabase, user }}>
       {props.children}
     </SupabaseContext.Provider>
   );
@@ -92,18 +79,6 @@ export const useSupabaseUser = () => {
   }
 
   return context.user;
-};
-
-export const useSupabaseUserCache = () => {
-  const context = useContext(SupabaseContext);
-
-  if (!context) {
-    throw new Error("Must useSupabase within a SupabaseProvider");
-  }
-
-  return {
-    users: context.users,
-  };
 };
 
 export function useSupabaseSubscription<T>(

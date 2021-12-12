@@ -8,10 +8,8 @@ import { useLoaderData, json } from "remix";
 import MessageList from "~/components/MessageList";
 import MessageInput from "~/components/MessageInput";
 import { supabase } from "~/util/auth";
-import {
-  useSupabaseSubscription,
-  useSupabaseUserCache,
-} from "~/context/supabase";
+import { useSupabaseSubscription } from "~/context/supabase";
+import { useUsersCache } from "~/context/users";
 import useMessages, { IMessage } from "~/hooks/useMessages";
 
 type ConversationData = {
@@ -56,7 +54,7 @@ const View = (props: IRoomViewProps) => {
   const [messages, MessageForm] = useConversationMessages(props.user, () =>
     formRef.current?.reset()
   );
-  const { users } = useSupabaseUserCache();
+  const { users } = useUsersCache();
 
   return (
     <section className="h-full flex flex-col">

@@ -8,10 +8,8 @@ import { useLoaderData, json } from "remix";
 import MessageList from "~/components/MessageList";
 import MessageInput from "~/components/MessageInput";
 import { supabase } from "~/util/auth";
-import {
-  useSupabaseSubscription,
-  useSupabaseUserCache,
-} from "~/context/supabase";
+import { useSupabaseSubscription } from "~/context/supabase";
+import { useUsersCache } from "~/context/users";
 import useMessages, { IMessage } from "~/hooks/useMessages";
 
 type RoomData = {
@@ -57,7 +55,7 @@ const View = (props: IRoomViewProps) => {
   const [messages, MessageForm] = useRoomMessages(props.room, () =>
     formRef.current?.reset()
   );
-  const { users } = useSupabaseUserCache();
+  const { users } = useUsersCache();
 
   return (
     <section className="h-full flex flex-col">
@@ -70,7 +68,7 @@ const View = (props: IRoomViewProps) => {
       <MessageList
         messages={messages.map((message) => ({
           id: message.id || message.local_id || "",
-          name: users[message.user_id || message.from_id].name || "",
+          name: users[message.user_id].name || "",
           content: message.content,
         }))}
       />

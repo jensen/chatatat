@@ -1,11 +1,12 @@
 import { useNavigate, Link } from "remix";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
-import { useSupabaseUserCache, useSupabaseUser } from "~/context/supabase";
+import { useSupabaseUser } from "~/context/supabase";
+import { useUsersCache } from "~/context/users";
 
 export default function NewRoom() {
   const u = useSupabaseUser();
-  const { users } = useSupabaseUserCache();
+  const { users } = useUsersCache();
   const navigate = useNavigate();
 
   const close = () => navigate(-1);

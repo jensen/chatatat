@@ -11,6 +11,7 @@ import {
 } from "remix";
 import type { LoaderFunction, MetaFunction, LinksFunction } from "remix";
 import { supabase } from "~/util/auth";
+import type { IUserResource, IRoomResource } from "~/services/types/resources";
 
 import SupabaseProvider from "~/context/supabase";
 import AuthProvider from "~/context/auth";
@@ -21,6 +22,7 @@ import create from "~/util/session.server";
 import Sidebar from "~/components/Sidebar";
 
 import compiledStyles from "~/styles/compiled.css";
+import UsersProvider from "./context/users";
 
 export let meta: MetaFunction = () => {
   return {
@@ -62,13 +64,15 @@ export default function App() {
   return (
     <Document>
       <Environment env={env} />
-      <SupabaseProvider token={token} users={users}>
-        <AuthProvider>
-          <Layout>
-            <Outlet />
-          </Layout>
-        </AuthProvider>
-      </SupabaseProvider>
+      <UsersProvider users={users}>
+        <SupabaseProvider token={token}>
+          <AuthProvider>
+            <Layout>
+              <Outlet />
+            </Layout>
+          </AuthProvider>
+        </SupabaseProvider>
+      </UsersProvider>
     </Document>
   );
 }
