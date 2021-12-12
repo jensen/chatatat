@@ -1,11 +1,9 @@
-interface IMessage {
-  id: string;
-  name: string;
-  content: string;
-}
-
 interface IMessageListProps {
-  messages: IMessage[];
+  messages: {
+    id: string;
+    name: string;
+    content: string;
+  }[];
 }
 
 export default function MessageList(props: IMessageListProps) {

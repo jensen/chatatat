@@ -1,12 +1,15 @@
 import type { IUserResource } from "~/services/types/resources";
-import { useRef } from "react";
+import React, { useRef } from "react";
 import { LoaderFunction } from "remix";
 import { useLoaderData, json } from "remix";
 import MessageList from "~/components/MessageList";
 import MessageInput from "~/components/MessageInput";
 import { supabase } from "~/util/auth";
-import { useSupabaseSubscription } from "~/context/supabase";
-import useMessages from "~/hooks/useMessages";
+import {
+  useSupabaseSubscription,
+  useSupabaseUserCache,
+} from "~/context/supabase";
+import useMessages, { IMessage } from "~/hooks/useMessages";
 
 type ConversationData = {
   user: IUserResource;
@@ -28,7 +31,10 @@ interface IRoomViewProps {
   user: IUserResource;
 }
 
-const useConversationMessages = (user: { id: string }, reset: () => void) => {
+const useConversationMessages = (
+  user: { id: string },
+  reset: () => void
+): [IMessage[], typeof MessageForm] => {
   const { messages, addMessage, MessageForm } = useMessages(
     `/conversations/${user.id}`,
     reset
@@ -40,10 +46,11 @@ const useConversationMessages = (user: { id: string }, reset: () => void) => {
 };
 
 const View = (props: IRoomViewProps) => {
-  const formRef = useRef<HTMLFormElement>();
+  const formRef = useRef<HTMLFormElement>(null);
   const [messages, MessageForm] = useConversationMessages(props.user, () =>
     formRef.current?.reset()
   );
+  const { users } = useSupabaseUserCache();
 
   return (
     <section className="h-full flex flex-col">
@@ -55,7 +62,13 @@ const View = (props: IRoomViewProps) => {
           </span>
         </h2>
       </header>
-      <MessageList messages={messages} />
+      <MessageList
+        messages={messages.map((message) => ({
+          id: message.id || message.local_id || "",
+          name: users[message.from_id].name || "",
+          content: message.content,
+        }))}
+      />
       <div className="">
         <MessageForm
           ref={formRef}

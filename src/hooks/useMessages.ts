@@ -5,7 +5,10 @@ import {
   IRoomMessageResource,
 } from "~/services/types/resources";
 
-interface IMessage extends IRoomMessageResource, IConversationMessageResource {
+export interface IMessage
+  extends Omit<IRoomMessageResource, "id">,
+    Omit<IConversationMessageResource, "id"> {
+  id?: string;
   local_id?: string;
 }
 

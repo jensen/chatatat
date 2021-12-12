@@ -12,7 +12,7 @@ import {
   useSupabaseSubscription,
   useSupabaseUserCache,
 } from "~/context/supabase";
-import useMessages from "~/hooks/useMessages";
+import useMessages, { IMessage } from "~/hooks/useMessages";
 
 type RoomData = {
   messages: IRoomMessageResource[];
@@ -38,7 +38,7 @@ interface IRoomViewProps {
 const useRoomMessages = (
   room: { id: string; slug: string },
   reset: () => void
-) => {
+): [IMessage[], typeof MessageForm] => {
   const { messages, addMessage, MessageForm } = useMessages(
     `/rooms/${room.slug}`,
     reset
@@ -50,7 +50,7 @@ const useRoomMessages = (
 };
 
 const View = (props: IRoomViewProps) => {
-  const formRef = useRef<HTMLFormElement>();
+  const formRef = useRef<HTMLFormElement>(null);
   const [messages, MessageForm] = useRoomMessages(props.room, () =>
     formRef.current?.reset()
   );
@@ -66,8 +66,8 @@ const View = (props: IRoomViewProps) => {
       </header>
       <MessageList
         messages={messages.map((message) => ({
-          id: message.id || message.local_id,
-          name: users[message.user_id || message.from_id].name,
+          id: message.id || message.local_id || "",
+          name: users[message.user_id || message.from_id].name || "",
           content: message.content,
         }))}
       />
