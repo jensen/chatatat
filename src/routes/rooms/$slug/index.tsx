@@ -44,7 +44,10 @@ const useRoomMessages = (
     reset
   );
 
-  useSupabaseSubscription(`room_messages:room_id=eq.${room.id}`, addMessage);
+  useSupabaseSubscription<IRoomMessageResource>(
+    `room_messages:room_id=eq.${room.id}`,
+    addMessage
+  );
 
   return [messages, MessageForm];
 };

@@ -106,10 +106,10 @@ export const useSupabaseUserCache = () => {
   };
 };
 
-export const useSupabaseSubscription = (
+export function useSupabaseSubscription<T>(
   table: string,
-  update: (item: any) => void
-) => {
+  update: (item: T) => void
+) {
   const supabase = useSupabase();
   const user = useSupabaseUser();
   const [state, setState] = useState<
@@ -146,4 +146,4 @@ export const useSupabaseSubscription = (
   }, [supabase, user, update, table]);
 
   return [state, reset];
-};
+}

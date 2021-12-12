@@ -7,11 +7,6 @@ type EnvironemntVars =
   | "COOKIE_SESSION_KEY_A"
   | "COOKIE_SESSION_KEY_B";
 
-type WindowWithPIXI = Window &
-  typeof globalThis & {
-    PIXI: any;
-  };
-
 type WindowWithEnvironment = Window &
   typeof globalThis & {
     env: Record<EnvironemntVars, "string">;

@@ -1,4 +1,7 @@
-import type { IUserResource } from "~/services/types/resources";
+import {
+  IConversationMessageResource,
+  IUserResource,
+} from "~/services/types/resources";
 import React, { useRef } from "react";
 import { LoaderFunction } from "remix";
 import { useLoaderData, json } from "remix";
@@ -40,7 +43,10 @@ const useConversationMessages = (
     reset
   );
 
-  useSupabaseSubscription(`direct_messages:from_id=eq.${user.id}`, addMessage);
+  useSupabaseSubscription<IConversationMessageResource>(
+    `direct_messages:from_id=eq.${user.id}`,
+    addMessage
+  );
 
   return [messages, MessageForm];
 };
