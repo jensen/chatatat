@@ -84,20 +84,22 @@ const View = (props: IRoomViewProps) => {
         >
           <MessageInput />
         </MessageForm>
-        <UploadButton
-          onUpload={(url: string | null) => {
-            if (url && user) {
-              submit(
-                {
-                  content: url,
-                  user_id: user.id,
-                  local_id: uuid(),
-                },
-                { method: "post", action }
-              );
-            }
-          }}
-        />
+        {user && (
+          <UploadButton
+            onUpload={(url: string | null) => {
+              if (url && user) {
+                submit(
+                  {
+                    content: url,
+                    user_id: user.id,
+                    local_id: uuid(),
+                  },
+                  { method: "post", action }
+                );
+              }
+            }}
+          />
+        )}
       </div>
     </section>
   );
