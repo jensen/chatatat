@@ -1,11 +1,15 @@
-import type {
-  IRoomMessageResource,
-  IConversationMessageResource,
-} from "~/services/types/resources";
-import { SupabaseClient, AuthUser } from "@supabase/supabase-js";
-import React, { useEffect, useState, useContext, useCallback } from "react";
+import type { SupabaseRealtimeClient } from "@supabase/supabase-js/dist/main/lib/SupabaseRealtimeClient";
+import {
+  SupabaseClient,
+  AuthUser,
+  SupabaseRealtimePayload,
+  RealtimeSubscription,
+} from "@supabase/supabase-js";
+import React, { useEffect, useState, useContext } from "react";
 import create from "~/services";
 import { useUsersCache } from "./users";
+import { SupabaseEventTypes } from "@supabase/supabase-js/dist/main/lib/types";
+import { SupabaseQueryBuilder } from "@supabase/supabase-js/dist/main/lib/SupabaseQueryBuilder";
 
 interface ISupabaseContext {
   supabase: SupabaseClient | null;
@@ -81,44 +85,36 @@ export const useSupabaseUser = () => {
   return context.user;
 };
 
+type SubscriptionCallbackFunctionType<T> = (item: T) => void;
+
 export function useSupabaseSubscription<T>(
   table: string,
-  update: (item: T) => void
+  options: {
+    insert?: SubscriptionCallbackFunctionType<T>;
+    update?: SubscriptionCallbackFunctionType<T>;
+    delete?: SubscriptionCallbackFunctionType<T>;
+  }
 ) {
   const supabase = useSupabase();
-  const user = useSupabaseUser();
-  const [state, setState] = useState<
-    IRoomMessageResource[] | IConversationMessageResource[]
-  >([]);
-
-  const reset = useCallback(() => {
-    setState([]);
-  }, []);
 
   useEffect(() => {
-    if (supabase) {
-      const subscription = supabase
-        .from(table)
-        .on("INSERT", async (payload) => {
-          if (payload.new.user_id) {
-            if (payload.new.user_id !== user?.id) {
-              update(payload.new);
-            }
-          }
-
-          if (payload.new.from_id) {
-            if (payload.new.from_id !== user?.id) {
-              update(payload.new);
-            }
-          }
-        })
-        .subscribe();
+    if (supabase && Object.keys(options).length > 0) {
+      const subscription: RealtimeSubscription = (
+        Object.entries(options).reduce<
+          SupabaseRealtimeClient | SupabaseQueryBuilder<T>
+        >(
+          (s, [key, value]) =>
+            s.on(
+              key.toUpperCase() as SupabaseEventTypes,
+              async (payload: SupabaseRealtimePayload<T>) => value(payload.new)
+            ),
+          supabase.from<T>(table)
+        ) as unknown as SupabaseRealtimeClient
+      ).subscribe();
 
       return () => {
         supabase.removeSubscription(subscription);
       };
     }
-  }, [supabase, user, update, table]);
-
-  return [state, reset];
+  }, [supabase, table, options.insert, options.update, options.delete]);
 }

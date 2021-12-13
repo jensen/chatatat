@@ -13,35 +13,36 @@ export interface IMessage
 }
 
 export default function useMessages(url: string, reset: () => void) {
-  const messages = useFetcher<IMessage>();
+  const messages = useFetcher<IMessage | IMessage[]>();
   const [state, setState] = useState<IMessage[]>([]);
-
-  useEffect(() => {
-    if (messages.data === undefined) return;
-
-    if (Array.isArray(messages.data)) {
-      setState(messages.data);
-    } else {
-      const { local_id, ...messageData } = messages.data;
-
-      if (local_id) {
-        setState((prev) =>
-          prev.map((message) =>
-            message.local_id === local_id ? messageData : message
-          )
-        );
-      }
-    }
-  }, [messages.data]);
 
   useEffect(() => {
     messages.load(`${url}/messages`);
   }, [messages.load, url]);
 
   useEffect(() => {
+    if (messages.state === "idle" && messages.type === "done") {
+      if (Array.isArray(messages.data)) {
+        setState(messages.data);
+      } else {
+        const { local_id, ...messageData } = messages.data;
+
+        if (local_id) {
+          setState((prev) =>
+            prev.map((message) =>
+              message.local_id === local_id ? messageData : message
+            )
+          );
+        }
+      }
+    }
+  }, [messages.data, messages.state, messages.type]);
+
+  useEffect(() => {
     if (
       messages.state === "submitting" &&
-      messages.type === "actionSubmission"
+      messages.type === "actionSubmission" &&
+      messages.submission?.formData
     ) {
       const latest: IMessage = Object.fromEntries(
         messages.submission.formData

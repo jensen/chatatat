@@ -2,7 +2,7 @@ import {
   IConversationMessageResource,
   IUserResource,
 } from "~/services/types/resources";
-import React, { useRef } from "react";
+import { useRef, useCallback } from "react";
 import { LoaderFunction } from "remix";
 import { useLoaderData, json } from "remix";
 import MessageList from "~/components/MessageList";
@@ -43,18 +43,23 @@ const useConversationMessages = (
 
   useSupabaseSubscription<IConversationMessageResource>(
     `direct_messages:from_id=eq.${user.id}`,
-    addMessage
+    {
+      insert: addMessage,
+    }
   );
 
   return [messages, MessageForm];
 };
 
 const View = (props: IRoomViewProps) => {
-  const formRef = useRef<HTMLFormElement>(null);
-  const [messages, MessageForm] = useConversationMessages(props.user, () =>
-    formRef.current?.reset()
-  );
   const { users } = useUsersCache();
+
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const [messages, MessageForm] = useConversationMessages(
+    props.user,
+    useCallback(() => formRef.current?.reset(), [])
+  );
 
   return (
     <section className="h-full flex flex-col">
@@ -73,7 +78,7 @@ const View = (props: IRoomViewProps) => {
           content: message.content,
         }))}
       />
-      <div className="">
+      <div>
         <MessageForm
           ref={formRef}
           method="post"

@@ -2,13 +2,13 @@ import type {
   IRoomResource,
   IRoomMessageResource,
 } from "~/services/types/resources";
-import { useRef } from "react";
+import { useRef, useCallback } from "react";
 import { LoaderFunction } from "remix";
 import { useLoaderData, json } from "remix";
 import MessageList from "~/components/MessageList";
 import MessageInput from "~/components/MessageInput";
 import { supabase } from "~/util/auth";
-import { useSupabaseSubscription } from "~/context/supabase";
+import { useSupabaseSubscription, useSupabaseUser } from "~/context/supabase";
 import { useUsersCache } from "~/context/users";
 import useMessages, { IMessage } from "~/hooks/useMessages";
 
@@ -37,6 +37,8 @@ const useRoomMessages = (
   room: { id: string; slug: string },
   reset: () => void
 ): [IMessage[], typeof MessageForm] => {
+  const user = useSupabaseUser();
+
   const { messages, addMessage, MessageForm } = useMessages(
     `/rooms/${room.slug}`,
     reset
@@ -44,18 +46,28 @@ const useRoomMessages = (
 
   useSupabaseSubscription<IRoomMessageResource>(
     `room_messages:room_id=eq.${room.id}`,
-    addMessage
+    {
+      insert: (message) => {
+        if (user && message.user_id !== user.id) {
+          console.log("adding message");
+          addMessage(message);
+        }
+      },
+    }
   );
 
   return [messages, MessageForm];
 };
 
 const View = (props: IRoomViewProps) => {
-  const formRef = useRef<HTMLFormElement>(null);
-  const [messages, MessageForm] = useRoomMessages(props.room, () =>
-    formRef.current?.reset()
-  );
   const { users } = useUsersCache();
+
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const [messages, MessageForm] = useRoomMessages(
+    props.room,
+    useCallback(() => formRef.current?.reset(), [])
+  );
 
   return (
     <section className="h-full flex flex-col">
@@ -72,7 +84,7 @@ const View = (props: IRoomViewProps) => {
           content: message.content,
         }))}
       />
-      <div className="">
+      <div>
         <MessageForm
           ref={formRef}
           method="post"
