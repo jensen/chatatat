@@ -664,8 +664,8 @@ export interface definitions {
      * This is a Primary Key.<pk/>
      */
     id: string;
-    name?: string;
-    avatar?: string;
+    name: string;
+    avatar: string;
   };
   profiles_private: {
     /**
@@ -674,7 +674,7 @@ export interface definitions {
      * This is a Foreign Key to `profiles.id`.<fk table='profiles' column='id'/>
      */
     id: string;
-    email?: string;
+    email: string;
     admin: boolean;
   };
   room_messages: {

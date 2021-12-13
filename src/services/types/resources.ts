@@ -4,4 +4,4 @@ export type IRoomResource = definitions["rooms"];
 export type IRoomMessageResource = definitions["room_messages"];
 export type IConversationMessageResource = definitions["direct_messages"];
 export type IUserResource = definitions["profiles"];
-export type IConversationResource = Partial<IUserResource>[];
+export type IConversationResource = IUserResource;

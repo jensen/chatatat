@@ -1,13 +1,13 @@
 drop table if exists profiles;
 create table profiles (
   id uuid references auth.users primary key,
-  name text,
-  avatar text
+  name text not null,
+  avatar text not null
 );
 
 create table profiles_private (
   id uuid references profiles(id) primary key,
-  email text,
+  email text not null,
   admin boolean default false not null
 );
 
