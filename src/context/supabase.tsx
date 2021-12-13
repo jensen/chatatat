@@ -118,3 +118,29 @@ export function useSupabaseSubscription<T>(
     }
   }, [supabase, table, options.insert, options.update, options.delete]);
 }
+
+export const useSupabaseUpload = (bucket: string) => {
+  const supabase = useSupabase();
+
+  const upload = async (file: File) => {
+    if (!supabase) throw new Error("Must have instance of supabase client");
+
+    const { data, error: uploadError } = await supabase?.storage
+      .from(bucket)
+      .upload(file.name, file);
+
+    if (uploadError) throw uploadError;
+
+    const { publicURL, error: urlError } = supabase?.storage
+      .from(bucket)
+      .getPublicUrl(file.name);
+
+    if (urlError) throw urlError;
+
+    return publicURL;
+  };
+
+  return {
+    upload,
+  };
+};

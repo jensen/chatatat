@@ -78,7 +78,7 @@ const View = (props: IRoomViewProps) => {
           content: message.content,
         }))}
       />
-      <div>
+      <div className="p-2">
         <MessageForm
           ref={formRef}
           method="post"

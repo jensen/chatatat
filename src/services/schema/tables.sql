@@ -58,6 +58,19 @@ create table rooms (
   constraint user_id foreign key(user_id) references profiles(id) on delete cascade
 );
 
+alter table rooms
+  enable row level security;
+
+create policy "Rooms selected: anon"
+  on rooms for select using (
+    true
+  );
+
+create policy "Rooms inserted: authenticated"
+  on rooms for insert with check (
+    auth.role() = 'authenticated'
+  );
+
 create extension unaccent;
 
 create or replace function public.slugify()
@@ -119,6 +132,19 @@ create table room_messages (
   constraint room_id foreign key(room_id) references rooms(id) on delete cascade
 );
 
+alter table room_messages
+  enable row level security;
+
+create policy "Room messages selected: anon"
+  on room_messages for select using (
+    true
+  );
+
+create policy "Room messages inserted: authenticated"
+  on room_messages for insert with check (
+    auth.role() = 'authenticated'
+  );
+
 drop publication if exists room_messages_insert;
 create publication room_messages_insert
   for table public.room_messages
@@ -148,3 +174,13 @@ begin
     join profiles on direct_messages.from_id = profiles.id or direct_messages.to_id = profiles.id
     where (direct_messages.from_id = auth.uid() or direct_messages.to_id = auth.uid()) and profiles.id != auth.uid();
 end $$;
+
+-- Storage
+
+create policy "Public Read Images"
+  on storage.objects for select
+  using ( bucket_id = 'public_images' );
+
+create policy "Public Write Images"
+  on storage.objects for insert
+  with check ( bucket_id = 'public_images' );

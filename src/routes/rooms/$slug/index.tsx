@@ -10,7 +10,9 @@ import MessageInput from "~/components/MessageInput";
 import { supabase } from "~/util/auth";
 import { useSupabaseSubscription, useSupabaseUser } from "~/context/supabase";
 import { useUsersCache } from "~/context/users";
-import useMessages, { IMessage } from "~/hooks/useMessages";
+import useMessages from "~/hooks/useMessages";
+import { v4 as uuid } from "uuid";
+import UploadButton from "~/components/UploadButton";
 
 type RoomData = {
   messages: IRoomMessageResource[];
@@ -33,41 +35,30 @@ interface IRoomViewProps {
   room: IRoomResource;
 }
 
-const useRoomMessages = (
-  room: { id: string; slug: string },
-  reset: () => void
-): [IMessage[], typeof MessageForm] => {
+const View = (props: IRoomViewProps) => {
+  const { users } = useUsersCache();
+
+  const formRef = useRef<HTMLFormElement>(null);
+
   const user = useSupabaseUser();
 
-  const { messages, addMessage, MessageForm } = useMessages(
-    `/rooms/${room.slug}`,
-    reset
+  const { messages, addMessage, MessageForm, submit } = useMessages(
+    `/rooms/${props.room.slug}`,
+    useCallback(() => formRef.current?.reset(), [])
   );
 
   useSupabaseSubscription<IRoomMessageResource>(
-    `room_messages:room_id=eq.${room.id}`,
+    `room_messages:room_id=eq.${props.room.id}`,
     {
       insert: (message) => {
         if (user && message.user_id !== user.id) {
-          console.log("adding message");
           addMessage(message);
         }
       },
     }
   );
 
-  return [messages, MessageForm];
-};
-
-const View = (props: IRoomViewProps) => {
-  const { users } = useUsersCache();
-
-  const formRef = useRef<HTMLFormElement>(null);
-
-  const [messages, MessageForm] = useRoomMessages(
-    props.room,
-    useCallback(() => formRef.current?.reset(), [])
-  );
+  const action = `/rooms/${props.room.slug}/messages`;
 
   return (
     <section className="h-full flex flex-col">
@@ -84,14 +75,29 @@ const View = (props: IRoomViewProps) => {
           content: message.content,
         }))}
       />
-      <div>
+      <div className="p-2 flex justify-between items-center space-x-2">
         <MessageForm
+          className="w-full"
           ref={formRef}
           method="post"
-          action={`/rooms/${props.room.slug}/messages`}
+          action={action}
         >
           <MessageInput />
         </MessageForm>
+        <UploadButton
+          onUpload={(url: string | null) => {
+            if (url && user) {
+              submit(
+                {
+                  content: url,
+                  user_id: user.id,
+                  local_id: uuid(),
+                },
+                { method: "post", action }
+              );
+            }
+          }}
+        />
       </div>
     </section>
   );

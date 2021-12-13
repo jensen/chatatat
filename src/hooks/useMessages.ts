@@ -10,6 +10,7 @@ export interface IMessage
     Omit<IConversationMessageResource, "id"> {
   id?: string;
   local_id?: string;
+  upload: File;
 }
 
 export default function useMessages(url: string, reset: () => void) {
@@ -56,6 +57,7 @@ export default function useMessages(url: string, reset: () => void) {
   return {
     messages: state,
     MessageForm: messages.Form,
+    submit: messages.submit,
     addMessage: useCallback(
       (message) => setState((prev) => [...prev, message]),
       []

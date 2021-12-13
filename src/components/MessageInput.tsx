@@ -23,19 +23,17 @@ export default function MessageInput(props: IMessageInputProps) {
       : {};
 
   return (
-    <div className="p-2">
-      <div className="border-gray-900 border-4 p-1 rounded-xl">
-        <input value={uuid()} name="local_id" type="hidden" />
-        <input value={user?.id || ""} name="user_id" type="hidden" />
-        <input value={user?.id || ""} name="from_id" type="hidden" />
-        <input
-          name="content"
-          ref={inputRef}
-          className="bg-dusk py-1 px-2 w-full rounded-lg focus:outline-none disabled:opacity-50"
-          type="text"
-          {...mustLogin}
-        />
-      </div>
+    <div className="border-gray-900 border-4 p-1 rounded-xl">
+      <input value={uuid()} name="local_id" type="hidden" />
+      <input value={user?.id || ""} name="user_id" type="hidden" />
+      <input value={user?.id || ""} name="from_id" type="hidden" />
+      <input
+        name="content"
+        ref={inputRef}
+        className="bg-dusk py-1 px-2 w-full rounded-lg focus:outline-none disabled:opacity-50"
+        type="text"
+        {...mustLogin}
+      />
     </div>
   );
 }
