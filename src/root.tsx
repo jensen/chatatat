@@ -43,7 +43,10 @@ export let loader: LoaderFunction = async ({ request }) => {
   const token = session.get("token");
 
   const { data: users } = await db.from<IUserResource>("profiles").select();
-  const { data: rooms } = await db.from<IRoomResource>("rooms").select();
+  const { data: rooms } = await db
+    .from<IRoomResource>("rooms")
+    .select()
+    .order("created_at", { ascending: true });
   const { data: conversations } = await db.rpc("get_conversations");
 
   return json({
