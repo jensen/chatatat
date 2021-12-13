@@ -1,6 +1,6 @@
 ## Purpose
 
-This project was completed as part of a group learning exercise. This project uses the query builder, authentication and realtime updates provided by [supabase](https://supabase.io).
+This project was completed as part of a group learning exercise. This project uses the query builder, authentication, storage and realtime updates provided by [supabase](https://supabase.io).
 
 ## Demo
 
