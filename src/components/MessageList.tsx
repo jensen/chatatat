@@ -1,3 +1,5 @@
+import { useEffect, useRef } from "react";
+
 interface IMessageListProps {
   messages: {
     id: string;
@@ -27,11 +29,20 @@ const extractImages = (value: string) => {
 };
 
 export default function MessageList(props: IMessageListProps) {
+  const scrollRef = useRef<HTMLLIElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  });
+
   return (
     <div className="flex-1 flex flex-col-reverse p-2 relative overflow-y-auto">
       <ul className="w-full px-2 flex flex-col justify-end">
         {props.messages.map((message) => {
           const { text, images } = extractImages(message.content);
+
           return (
             <li key={message.id} className="text-sm">
               <span className="font-bold text-gray-300">{message.name}</span>
@@ -42,6 +53,7 @@ export default function MessageList(props: IMessageListProps) {
             </li>
           );
         })}
+        <li ref={scrollRef} />
       </ul>
     </div>
   );
