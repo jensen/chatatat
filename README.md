@@ -22,6 +22,7 @@ This project was completed as part of a group learning exercise. This project us
 2. ✅ Messages are saved in a database
 3. ✅ Users can chat in private
 4. ✅ Users can join channels on specific topics
+5. ✅ Users can upload images, or paste image urls to embed
 
 ## Technical Specifications
 
@@ -69,6 +70,10 @@ useEffect(() => {
 ```
 
 This is slightly simplified, the version in being used in production handles private and public messages.
+
+### Storage
+
+Supabase storage is used for image uploads. An image is stored, and the link is included in a message. The messages are all parsed for image links, when an image link is found it is rendered with an image tag.
 
 ### Auth
 
