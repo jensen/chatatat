@@ -71,7 +71,7 @@ create policy "Rooms inserted: authenticated"
     auth.role() = 'authenticated'
   );
 
-create extension unaccent;
+create extension unaccent with schema extensions;
 
 create or replace function public.slugify()
  returns trigger
