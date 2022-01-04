@@ -22,29 +22,31 @@ export default function SidebarList(props: ISidebarListProps) {
         {props.title}
         <AddButton to={`${props.path}/new`} />
       </header>
-      <ul className="w-64 h-full">
-        {props.items.map((item) => (
-          <li
-            key={item.id}
-            className={cx("w-full text-gray-400 hover:text-gray-200 text-sm")}
-          >
-            <NavLink
-              to={`${props.path}/${item.slug || item.id}`}
-              className="px-2 py-1 rounded flex items-center"
-              style={({ isActive }) => (isActive ? activeStyle : {})}
+      {props.items && (
+        <ul className="w-64 h-full">
+          {props.items.map((item) => (
+            <li
+              key={item.id}
+              className={cx("w-full text-gray-400 hover:text-gray-200 text-sm")}
             >
-              {item.avatar ? (
-                <>
-                  <img className="w-4 h-4 rounded-full" src={item.avatar} />
-                  <span className="ml-2">{item.name}</span>
-                </>
-              ) : (
-                item.name
-              )}
-            </NavLink>
-          </li>
-        ))}
-      </ul>
+              <NavLink
+                to={`${props.path}/${item.slug || item.id}`}
+                className="px-2 py-1 rounded flex items-center"
+                style={({ isActive }) => (isActive ? activeStyle : {})}
+              >
+                {item.avatar ? (
+                  <>
+                    <img className="w-4 h-4 rounded-full" src={item.avatar} />
+                    <span className="ml-2">{item.name}</span>
+                  </>
+                ) : (
+                  item.name
+                )}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 }
